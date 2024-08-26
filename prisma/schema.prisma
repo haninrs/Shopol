@@ -14,25 +14,77 @@ datasource db {
 }
 
 model Store {
-  id        String   @id @default(uuid())
-  name      String
-  userId    String
+  id     String @id @default(uuid())
+  name   String
+  userId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  banners Banner[] @relation("StoreToBanner")
+  // relation
+  banners  Banner[]
+  Category Category[]
+  Product  Product[]
 }
 
 model Banner {
   id      String @id @default(uuid())
   storeId String
-  label String
-  imgUrl String
+  label   String
+  imgUrl  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // relation
-  store Store @relation("StoreToBanner", fields: [storeId], references: [id])
+  store      Store      @relation(fields: [storeId], references: [id])
+  categories Category[]
 
   @@index([storeId])
+}
+
+model Category {
+  id       String @id @default(uuid())
+  storeId  String
+  bannerId String
+  name     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relation
+  store   Store     @relation(fields: [storeId], references: [id])
+  banner  Banner    @relation(fields: [bannerId], references: [id])
+  Product Product[]
+
+  @@index([storeId])
+  @@index([bannerId])
+}
+
+model Product {
+  id         String   @id @default(uuid())
+  storeId    String
+  categoryId String
+  name       String
+  price      Decimal
+  isFeatured Boolean  @default(false)
+  isArchived Boolean  @default(false)
+  images     ImageProduct[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  store    Store    @relation(fields: [storeId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@index([storeId])
+  @@index([categoryId])
+}
+
+model ImageProduct {
+  id        String   @unique @default(uuid())
+  productId String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
 }

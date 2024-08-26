@@ -53,7 +53,7 @@ const StoreSwithcer = ({ className, stores = [] }: StoreSwitcherProps) => {
                 <CommandItem key={store.id} onSelect={() => onStoreSelect(store)} className="text-sm">
                   <StoreIcon className="mr-2 h-4 w-4" />
                   {store.name}
-                  <Check className={cn("ml-auto h-4 w-4", currentStore?.id === store.id ? "opacity-100" : "opacity-0")} />
+                  <Check className={cn("ml-auto h-4 w-4 ", currentStore?.id === store.id ? "opacity-100" : "opacity-0")} />
                 </CommandItem>
               ))}
             </CommandGroup>
