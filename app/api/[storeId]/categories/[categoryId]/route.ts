@@ -16,7 +16,7 @@ export async function GET(req: Request, { params }: { params: { categoryId: stri
       });
 
   
-      console.log("category data:" , category);
+      // console.log("category data:" , category);
       
       return NextResponse.json(category);
     } catch (error) {

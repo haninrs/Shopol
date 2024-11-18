@@ -50,12 +50,15 @@ export async function POST(req: Request, { params }: { params: { storeId: string
 export async function GET(req: Request, { params }: { params: { storeId: string } }) {
   try {
     const { searchParams } = new URL(req.url);
+
+    const limit = searchParams.get("limit") || 6;
     const categoryId = searchParams.get("categoryId") || undefined;
     const isFeatured = searchParams.get("isFeatured");
 
     if (!params.storeId) return new NextResponse("Missing storeId", { status: 400 });
 
     const products = await db.product.findMany({
+      take: +limit,
       where: {
         storeId: params.storeId,
         categoryId,
@@ -71,7 +74,16 @@ export async function GET(req: Request, { params }: { params: { storeId: string 
       },
     });
 
-    return NextResponse.json(products);
+
+
+    // const response = NextResponse.json({ count: products.length, limit, products });
+
+    const response = NextResponse.json(products);
+    response.headers.set('Access-Control-Allow-Origin', '*'); // Or specify a particular origin
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    return response;
   } catch (error) {
     console.log("[PRODUCTS_GET_ERROR] : ", error);
     return new NextResponse("Internal Server Error", { status: 500 });
